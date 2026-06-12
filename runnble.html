@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>러너블 · 광고운영</title>
+<style>
+:root {
+  --sb:#0f1117; --sb-text:#8b8fa8; --sb-hover:rgba(255,255,255,.05); --sb-on:rgba(255,255,255,.08);
+  --bg:#f5f6fa; --surf:#fff; --bdr:#e8eaf0; --bdr2:#d0d3de;
+  --t1:#1a1d2e; --t2:#6b7080; --t3:#a8acbe;
+  --blu:#3b5bdb; --blu-bg:#eef2ff; --blu-bdr:#bac8ff;
+  --pnk:#c2255c; --pnk-bg:#fff0f6; --pnk-bdr:#fcc2d7;
+  --grn:#2f9e44; --grn-bg:#ebfbee;
+  --amb:#e67700; --amb-bg:#fff9db;
+  --r:8px; --fn:'Apple SD Gothic Neo','Malgun Gothic',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--t1);font-size:13px}
+.app{display:grid;grid-template-columns:200px 1fr;height:100vh;overflow:hidden}
+.sb{background:var(--sb);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.main{overflow-y:auto}
+
+/* sidebar */
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-brand{font-size:14px;font-weight:800;color:#fff;letter-spacing:.04em}
+.sb-sub{font-size:10px;color:var(--sb-text);margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
+.sb-sec{padding:20px 16px 6px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.sbi{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:6px;margin:1px 8px;font-size:12px;font-weight:500;color:var(--sb-text);cursor:pointer;border:none;background:none;width:calc(100% - 16px);text-align:left;transition:all .12s}
+.sbi:hover{background:var(--sb-hover);color:#fff}
+.sbi.on{background:var(--sb-on);color:#fff}
+.sbi .ct{margin-left:auto;font-size:9px;font-weight:700;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);border-radius:20px;padding:1px 7px}
+.sbi.on .ct{background:rgba(255,255,255,.15);color:rgba(255,255,255,.8)}
+.sb-div{height:1px;background:rgba(255,255,255,.06);margin:8px 12px}
+.sb-bottom{margin-top:auto;padding:14px 12px;border-top:1px solid rgba(255,255,255,.06)}
+.sb-date{font-size:10px;color:rgba(255,255,255,.3);line-height:1.7}
+
+/* page header */
+.ph{padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.ph-l .ey{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.ph-l .pt{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.ph-r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* search */
+.srch{position:relative}
+.srch-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:13px;pointer-events:none}
+.srch input{width:220px;height:34px;padding:0 10px 0 30px;border:1px solid var(--bdr2);border-radius:var(--r);font-family:var(--fn);font-size:12px;background:var(--surf);color:var(--t1)}
+.srch input:focus{outline:none;border-color:var(--blu);box-shadow:0 0 0 3px rgba(59,91,219,.1)}
+.srch-drop{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--surf);border:1px solid var(--bdr2);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:200;max-height:300px;overflow-y:auto;display:none}
+.srch-drop.open{display:block}
+.sri{padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px}
+.sri:last-child{border-bottom:none}
+.sri:hover{background:var(--bg)}
+.sri-name{font-size:12px;font-weight:600}
+.sri-meta{font-size:10px;color:var(--t3);margin-top:1px}
+
+/* buttons */
+.btn{font-family:var(--fn);font-size:12px;font-weight:600;padding:0 14px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bdr2);background:var(--surf);color:var(--t1);white-space:nowrap;height:34px;display:inline-flex;align-items:center;gap:6px;transition:all .12s}
+.btn:hover{background:var(--bg)}
+.btn-p{background:var(--blu);color:#fff;border-color:var(--blu)}
+.btn-p:hover{background:#2f4cc4}
+.btn-sm{height:28px;font-size:11px;padding:0 10px}
+.btn-icon{background:none;border:1px solid var(--bdr);border-radius:var(--r);width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--t2);transition:all .12s}
+.btn-icon:hover{background:var(--bg)}
+.btn-icon.del:hover{background:var(--pnk-bg);color:var(--pnk);border-color:var(--pnk-bdr)}
+
+/* month chips */
+.mrow{padding:0 28px;display:flex;gap:4px;overflow-x:auto;margin-bottom:16px}
+.mrow::-webkit-scrollbar{height:2px}
+.mc{padding:5px 14px;border-radius:20px;border:1px solid var(--bdr);background:var(--surf);font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .12s}
+.mc.on{background:var(--t1);color:#fff;border-color:var(--t1)}
+.mc:hover:not(.on){border-color:var(--bdr2);background:var(--bg)}
+
+/* filter row */
+.frow{padding:0 28px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fsel{font-family:var(--fn);font-size:11px;padding:0 8px;border:1px solid var(--bdr2);border-radius:var(--r);background:var(--surf);color:var(--t1);height:30px;cursor:pointer}
+.fsel:focus{outline:none;border-color:var(--blu)}
+
+/* kpi */
+.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:0 28px 16px}
+.kpi{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi.blue::after{background:var(--blu)}.kpi.pink::after{background:var(--pnk)}.kpi.gray::after{background:var(--t3)}
+.kl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.kv{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.ks{font-size:10px;color:var(--t3);margin-top:4px}
+.kpi.blue .kv{color:var(--blu)}.kpi.pink .kv{color:var(--pnk)}
+
+/* pad / card */
+.pad{padding:0 28px}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:16px}
+
+/* campaign list */
+.ccard{padding:14px 18px;border-bottom:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;gap:14px;transition:background .1s}
+.ccard:last-child{border-bottom:none}
+.ccard:hover{background:#fafbff}
+.ccard.sel{background:var(--blu-bg)}
+.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cdot.on{background:var(--grn)}.cdot.off{background:var(--t3)}
+.cbody{flex:1;min-width:0}
+.cname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.cmeta{font-size:10px;color:var(--t3);display:flex;gap:10px;flex-wrap:wrap}
+.cstats{display:flex;gap:16px;text-align:right;flex-shrink:0}
+.cs{display:flex;flex-direction:column;gap:1px}
+.csv{font-size:13px;font-weight:700;color:var(--blu)}
+.csl{font-size:9px;color:var(--t3)}
+.chip{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+.cb{background:var(--blu-bg);color:var(--blu)}.cg{background:var(--grn-bg);color:var(--grn)}.cx{background:var(--bg);color:var(--t2)}
+.empty{text-align:center;padding:48px 20px;color:var(--t3)}
+
+/* report nav */
+.rnav{padding:18px 28px 0;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.rback{font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:1px solid var(--bdr);border-radius:var(--r);padding:5px 10px}
+.rback:hover{background:var(--bg)}
+.rcrumb{font-size:11px;color:var(--t3)}
+
+/* setup */
+.scard{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:18px 20px;margin:0 28px 16px}
+.sh{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:10px;font-weight:700;color:var(--t2)}
+.fld input,.fld select{font-family:var(--fn);font-size:12px;padding:6px 9px;border:1px solid var(--bdr2);border-radius:var(--r);background:#fff;color:var(--t1);height:32px}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--blu)}
+.hr{height:1px;background:var(--bdr);margin:14px 0}
+.pchips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.pch{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600}
+.pch .x{cursor:pointer;color:var(--t3);font-size:12px;line-height:1}
+.pch .x:hover{color:var(--pnk)}
+
+/* report header */
+.rh{padding:12px 28px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.rh-title{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.rh-chips{display:flex;gap:5px;flex-wrap:wrap}
+
+/* tabs */
+.tbar{padding:0 28px;display:flex;border-bottom:1px solid var(--bdr);margin-bottom:14px;overflow-x:auto}
+.rtab{font-family:var(--fn);font-size:12px;font-weight:600;padding:8px 16px;border:none;background:none;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .12s}
+.rtab.on{color:var(--blu);border-bottom-color:var(--blu)}
+.rtab:hover{color:var(--t1)}
+
+/* date filter agency */
+.agdf{padding:10px 28px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surf);border-bottom:1px solid var(--bdr)}
+.agdf label{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em}
+.agdf input{font-family:var(--fn);font-size:12px;padding:0 8px;border:1px solid var(--bdr2);border-radius:var(--r);background:var(--surf);color:var(--t1);height:30px}
+.agdf input:focus{outline:none;border-color:var(--blu)}
+
+/* table */
+.tw{margin:0 28px 24px;border:1px solid var(--bdr);border-radius:10px;background:var(--surf);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:440px}
+thead tr.grp th{padding:8px 0;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--bdr);text-align:center}
+thead tr.grp th.dg{background:#f0f4ff;color:var(--blu)}
+thead tr.grp th.rg{background:#fff0f6;color:var(--pnk)}
+thead tr.grp th.bg{background:#fafbfc;color:var(--t3)}
+thead tr.cols th{padding:8px 10px;font-size:10px;font-weight:700;color:var(--t2);border-bottom:2px solid var(--bdr);white-space:nowrap;background:#fafbfc}
+thead tr.cols th.dc{background:#f4f7ff;color:var(--blu);text-align:center}
+thead tr.cols th.rc{background:#fff5f9;color:var(--pnk);text-align:center}
+thead tr.cols th.bc{text-align:left}
+tbody tr{border-bottom:1px solid var(--bdr)}
+tbody tr:last-child{border-bottom:none}
+tbody tr.we td{background:#fafbfc}
+tbody tr:hover td{background:#f8f9fe!important}
+tbody td{height:38px;padding:0;vertical-align:middle}
+.ci{padding:0 10px;height:100%;display:flex;align-items:center}
+.ci.c{justify-content:center}
+td.dc{background:#f7f9ff}
+td.rc{background:#fff7fb}
+
+/* input cells */
+.ni{font-family:var(--fn);font-size:12px;width:100%;height:100%;border:none;background:transparent;color:var(--t1);text-align:center;padding:0;outline:none;-moz-appearance:textfield}
+.ni::-webkit-outer-spin-button,.ni::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.ni:focus{background:#fffde8;border-radius:3px}
+td.dc .ni{color:var(--blu)}
+td.rc .ni{color:var(--pnk)}
+.ni.auto{opacity:.55}
+
+/* sum row */
+tr.sumr td{background:var(--t1)!important;height:40px}
+tr.sumr td .ci{color:#fff;font-weight:700;justify-content:center}
+tr.sumr td.dc .ci{color:#bac8ff}
+tr.sumr td.rc .ci{color:#fcc2d7}
+
+.dow{font-size:9px;color:var(--t3);margin-left:4px}
+.cpill{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700;background:var(--amb-bg);color:var(--amb)}
+
+/* monthly */
+.mvg{display:flex;flex-direction:column;gap:16px;padding:0 28px 32px}
+.mvt{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:8px}
+.mvcard{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.mvcard table{width:100%;border-collapse:collapse;font-size:12px}
+.mvcard thead th{padding:9px 14px;font-size:10px;font-weight:700;color:var(--t2);border-bottom:2px solid var(--bdr);background:#fafbfc;text-align:left}
+.mvcard thead th.r{text-align:right}
+.mvcard tbody td{padding:9px 14px;border-bottom:1px solid var(--bdr);font-variant-numeric:tabular-nums}
+.mvcard tbody td.r{text-align:right}
+.mvcard tbody tr:last-child td{border-bottom:none}
+.mvcard tbody tr:hover td{background:var(--bg)}
+.mvcard tr.sumr td{background:var(--t1)!important;color:#fff;font-weight:700}
+
+/* settings page */
+.stg{padding:0 28px 40px}
+.stg-sec{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:20px 22px;margin-bottom:16px}
+.stg-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.stg-sub{font-size:11px;color:var(--t2);margin-bottom:16px}
+.thr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.thr-row{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 12px}
+.thr-name{flex:1;font-size:12px;font-weight:600;color:var(--t1)}
+.thr-inp{font-family:var(--fn);font-size:13px;font-weight:700;width:64px;padding:4px 8px;border:1px solid var(--bdr2);border-radius:5px;text-align:center;color:var(--blu);background:#fff;-moz-appearance:textfield}
+.thr-inp::-webkit-outer-spin-button,.thr-inp::-webkit-inner-spin-button{-webkit-appearance:none}
+.thr-inp:focus{outline:none;border-color:var(--blu)}
+.thr-pct{font-size:11px;color:var(--t2);font-weight:600}
+.thr-add{display:flex;gap:8px;margin-top:12px;align-items:center}
+.thr-add input{font-family:var(--fn);font-size:12px;padding:0 9px;border:1px solid var(--bdr2);border-radius:var(--r);width:180px;height:30px}
+
+/* modals */
+.ovl{display:none;position:fixed;inset:0;background:rgba(15,17,23,.5);z-index:100;align-items:center;justify-content:center}
+.ovl.open{display:flex}
+.modal{background:var(--surf);border-radius:12px;padding:24px;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:11px;color:var(--t2);margin-bottom:18px}
+.mfld{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.mfld label{font-size:10px;font-weight:700;color:var(--t2)}
+.mfld input{font-family:var(--fn);font-size:13px;padding:8px 10px;border:1px solid var(--bdr2);border-radius:var(--r);background:#fff;color:var(--t1);height:36px}
+.mfld input:focus{outline:none;border-color:var(--blu)}
+.mfr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mac{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid var(--bdr)}
+.urlbox{background:var(--bg);border:1px solid var(--bdr2);border-radius:var(--r);padding:10px 12px;font-size:11px;word-break:break-all;color:var(--t2);margin-bottom:12px;font-family:monospace;line-height:1.6}
+
+/* agency banner */
+.agb{background:var(--t1);padding:20px 28px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.agb-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px}
+.agb-sub{font-size:11px;color:rgba(255,255,255,.45)}
+.agb-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:rgba(255,255,255,.8)}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--t1);color:#fff;padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  .app{grid-template-columns:1fr}
+  .sb{display:none}
+  .tw{margin-left:16px;margin-right:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sb" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-brand">RUNNBLE</div>
+    <div class="sb-sub">Ad Operations</div>
+  </div>
+  <div class="sb-sec">분석</div>
+  <button class="sbi on" id="sb-list" onclick="gotoList()"><span>▤</span> 전체 캠페인 <span class="ct" id="ct-all">0</span></button>
+  <button class="sbi" id="sb-mo" onclick="gotoMonthly()"><span>◫</span> 월별 성과</button>
+  <div class="sb-div"></div>
+  <div class="sb-sec">랩사</div>
+  <div id="sb-ags"></div>
+  <div class="sb-div"></div>
+  <button class="sbi" id="sb-stg" onclick="gotoSettings()"><span>⚙</span> 설정</button>
+  <div class="sb-bottom"><div class="sb-date" id="sb-date"></div></div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main" id="main">
+
+  <!-- LIST -->
+  <div id="v-list">
+    <div class="ph">
+      <div class="ph-l"><div class="ey">Campaign Management</div><div class="pt" id="list-title">전체 캠페인</div></div>
+      <div class="ph-r">
+        <div class="srch">
+          <span class="srch-ico">🔍</span>
+          <input id="srch-inp" placeholder="캠페인 · 광고주 · 랩사" oninput="doSearch()" onblur="setTimeout(closeSearch,160)">
+          <div class="srch-drop" id="srch-drop"></div>
+        </div>
+        <button class="btn btn-p" onclick="openNewModal()">+ 새 캠페인</button>
+      </div>
+    </div>
+    <div class="mrow" id="month-chips"></div>
+    <div class="frow">
+      <span style="font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em">랩사</span>
+      <select class="fsel" id="ag-filter" onchange="renderList()"><option value="">전체</option></select>
+    </div>
+    <div class="krow" id="list-kpi"></div>
+    <div class="pad"><div class="card" id="clist"></div></div>
+  </div>
+
+  <!-- REPORT -->
+  <div id="v-report" style="display:none">
+    <div class="agb" id="agb" style="display:none">
+      <div><div class="agb-title" id="agb-title">광고 성과 리포트</div><div class="agb-sub" id="agb-sub"></div></div>
+      <div class="agb-badge" id="agb-badge"></div>
+    </div>
+    <div class="rnav" id="rnav">
+      <button class="rback" onclick="gotoList()">← 목록으로</button>
+      <span class="rcrumb" id="rcrumb"></span>
+      <div style="margin-left:auto;display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="doExport()">CSV</button>
+        <button class="btn btn-sm btn-p" onclick="openShare()">공유 링크</button>
+      </div>
+    </div>
+    <!-- agency date filter -->
+    <div class="agdf" id="agdf" style="display:none">
+      <label>기간</label>
+      <input type="date" id="af-s" onchange="onAgFilter()">
+      <span style="font-size:11px;color:var(--t3)">~</span>
+      <input type="date" id="af-e" onchange="onAgFilter()">
+      <button class="btn btn-sm" onclick="resetAgFilter()">전체 기간</button>
+      <div style="margin-left:auto"><button class="btn btn-sm" onclick="doExport()">CSV</button></div>
+    </div>
+    <!-- report header -->
+    <div class="rh">
+      <div><div class="rh-title" id="rh-title">리포트</div><div class="rh-chips" id="rh-chips"></div></div>
+    </div>
+    <!-- setup (admin only) -->
+    <div class="scard" id="r-setup">
+      <div class="sh">캠페인 설정</div>
+      <div class="sgrid">
+        <div class="fld"><label>광고주</label><input type="text" id="rc-client" oninput="rSaveCfg()"></div>
+        <div class="fld"><label>캠페인명</label><input type="text" id="rc-campaign" oninput="rSaveCfg()"></div>
+        <div class="fld"><label>랩사명</label><input type="text" id="rc-agency" oninput="rSaveCfg()"></div>
+        <div class="fld"><label>시작일</label><input type="date" id="rc-start" onchange="rDateChange()"></div>
+        <div class="fld"><label>종료일</label><input type="date" id="rc-end" onchange="rDateChange()"></div>
+      </div>
+      <div class="hr"></div>
+      <div class="sh" style="margin-bottom:8px">광고 상품</div>
+      <div class="pchips" id="r-prods"></div>
+      <div style="display:flex;gap:7px;margin-top:8px">
+        <input type="text" id="r-newprod" placeholder="상품명 입력" style="font-family:var(--fn);font-size:12px;padding:0 9px;border:1px solid var(--bdr2);border-radius:var(--r);width:190px;height:30px" onkeydown="if(event.key==='Enter')rAddProd()">
+        <button class="btn btn-sm" onclick="rAddProd()">+ 추가</button>
+      </div>
+    </div>
+    <div class="krow" id="r-kpi"></div>
+    <div class="tbar" id="r-tabs"></div>
+    <div class="tw" id="r-tbl"></div>
+  </div>
+
+  <!-- MONTHLY -->
+  <div id="v-monthly" style="display:none">
+    <div class="ph"><div class="ph-l"><div class="ey">Performance Report</div><div class="pt">월별 성과</div></div></div>
+    <div class="mrow" id="month-chips-2"></div>
+    <div class="krow" id="mo-kpi"></div>
+    <div class="mvg">
+      <div><div class="mvt" id="mo-title">캠페인 성과</div>
+        <div class="mvcard"><table><thead><tr>
+          <th>캠페인</th><th>광고주</th><th>랩사</th><th>기간</th>
+          <th class="r">노출수</th><th class="r">클릭수</th><th class="r">CTR</th>
+        </tr></thead><tbody id="mo-tbody"></tbody></table></div>
+      </div>
+      <div><div class="mvt">랩사별 합산</div>
+        <div class="mvcard"><table><thead><tr>
+          <th>랩사</th><th class="r">캠페인</th><th class="r">노출수</th><th class="r">클릭수</th><th class="r">CTR</th>
+        </tr></thead><tbody id="ag-tbody"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="v-settings" style="display:none">
+    <div class="ph"><div class="ph-l"><div class="ey">Configuration</div><div class="pt">설정</div></div></div>
+    <div class="stg">
+      <div class="stg-sec">
+        <div class="stg-title">CTR 기준값 설정</div>
+        <div class="stg-sub">상품명별 CTR 기준값을 설정하세요. 이 값을 초과할 때만 노란색 박스가 표시됩니다. 모든 캠페인에 적용됩니다.</div>
+        <div class="thr-grid" id="thr-grid"></div>
+        <div class="thr-add">
+          <input type="text" id="thr-new-name" placeholder="새 상품명 입력">
+          <input type="text" id="thr-new-val" placeholder="기준 %" style="width:80px;font-family:var(--fn);font-size:12px;padding:0 9px;border:1px solid var(--bdr2);border-radius:var(--r);height:30px">
+          <button class="btn btn-sm btn-p" onclick="thrAdd()">+ 추가</button>
+        </div>
+      </div>
+      <div class="stg-sec">
+        <div class="stg-title">데이터 관리</div>
+        <div class="stg-sub">전체 데이터를 JSON으로 내보내거나 가져올 수 있습니다.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" onclick="exportAll()">전체 데이터 내보내기</button>
+          <label class="btn" style="cursor:pointer">데이터 가져오기<input type="file" accept=".json" style="display:none" onchange="importAll(this)"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- modals -->
+<div class="ovl" id="new-ovl" onclick="if(event.target===this)closeNewModal()">
+  <div class="modal">
+    <div class="modal-title" id="nm-title">새 캠페인 추가</div>
+    <div class="modal-sub">기본 정보를 입력하세요</div>
+    <input type="hidden" id="nm-id">
+    <div class="mfr">
+      <div class="mfld"><label>광고주 *</label><input type="text" id="nm-client" placeholder="예: 아식스"></div>
+      <div class="mfld"><label>랩사명 *</label><input type="text" id="nm-agency" placeholder="예: 인크로스"></div>
+    </div>
+    <div class="mfld"><label>캠페인명 *</label><input type="text" id="nm-campaign" placeholder="예: 아식스 런닝화 6월"></div>
+    <div class="mfr">
+      <div class="mfld"><label>시작일 *</label><input type="date" id="nm-start"></div>
+      <div class="mfld"><label>종료일 *</label><input type="date" id="nm-end"></div>
+    </div>
+    <div class="mfld"><label>광고 상품 (쉼표 구분)</label><input type="text" id="nm-prods" placeholder="바텀시트, 메인 띠배너, 기록면 띠배너"></div>
+    <div class="mac">
+      <button class="btn" onclick="closeNewModal()">취소</button>
+      <button class="btn btn-p" onclick="saveCampaign()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="ovl" id="share-ovl" onclick="if(event.target===this)closeShare()">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title">공유 링크 생성</div>
+    <div class="modal-sub">이 링크를 랩사에 전달하세요. 성과 데이터만 표시됩니다.</div>
+    <div class="urlbox" id="share-url"></div>
+    <div class="mac">
+      <button class="btn" onclick="closeShare()">닫기</button>
+      <button class="btn btn-p" onclick="copyShare()">링크 복사</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════
+//  CONSTANTS & STATE
+// ════════════════════════════════════
+const DOW = ['일','월','화','수','목','금','토'];
+const KEY_CAMPS = 'runnble_campaigns';
+const KEY_THR   = 'runnble_thresholds';
+const rKey = id => 'runnble_report_' + id;
+
+let selMonth = 'all';
+let curView = 'list';
+let curCampId = null;
+let curRD = null;
+let curTab = 0;
+let isAgency = false;
+
+// ── storage ──
+function loadCamps(){ try{return JSON.parse(localStorage.getItem(KEY_CAMPS)||'[]')}catch{return[]} }
+function saveCamps(a){ localStorage.setItem(KEY_CAMPS,JSON.stringify(a)) }
+function loadRD(id){ try{return JSON.parse(localStorage.getItem(rKey(id))||'null')}catch{return null} }
+function saveRD(id,d){ localStorage.setItem(rKey(id),JSON.stringify(d)) }
+
+// ── CTR thresholds (global, stored separately) ──
+const DEFAULT_THR = {'바텀시트':5.0,'메인 띠배너':1.0,'기록면 띠배너':0.5,'접수면 띠배너':0.5};
+function loadThresholds(){
+  try{
+    const stored = localStorage.getItem(KEY_THR);
+    // If nothing stored yet, save defaults so agency view also gets them
+    if(!stored){ saveThresholds({...DEFAULT_THR}); return {...DEFAULT_THR}; }
+    return JSON.parse(stored);
+  }catch{ return {...DEFAULT_THR}; }
+}
+function saveThresholds(t){ localStorage.setItem(KEY_THR,JSON.stringify(t)) }
+let THR = loadThresholds();
+
+// ── utils ──
+function N(n){ return Math.round(n).toLocaleString('ko-KR') }
+function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),2200) }
+
+// Date helpers — UTC noon to avoid timezone shift
+function dateStr(d){ const y=d.getUTCFullYear(),m=String(d.getUTCMonth()+1).padStart(2,'0'),dd=String(d.getUTCDate()).padStart(2,'0'); return `${y}-${m}-${dd}` }
+function parseDateUTC(s){ return new Date(s+'T12:00:00Z') }
+function getDow(s){ return DOW[parseDateUTC(s).getUTCDay()] }
+function isWe(s){ const d=parseDateUTC(s).getUTCDay(); return d===0||d===6 }
+function getDatesRange(start,end){
+  if(!start||!end) return [];
+  const out=[]; let d=parseDateUTC(start); const e=parseDateUTC(end);
+  while(d<=e){ out.push(dateStr(d)); d.setUTCDate(d.getUTCDate()+1); }
+  return out;
+}
+
+// CTR pill — only show if exceeds threshold, else plain text
+function ctrDisplay(v, prod){
+  if(v===''||v===null||v===undefined) return '—';
+  const n=parseFloat(v); if(isNaN(n)) return '—';
+  if(prod && THR[prod]!==undefined && n>=THR[prod]){
+    return `<span class="cpill">${n.toFixed(2)}%</span>`;
+  }
+  return `<span style="font-size:11px;color:var(--t2)">${n.toFixed(2)}%</span>`;
+}
+function ctrDisplayNoThr(v){ // for totals / monthly — no threshold
+  if(v===''||v===null||v===undefined||isNaN(parseFloat(v))) return '—';
+  return `<span style="font-size:11px;color:var(--t2)">${parseFloat(v).toFixed(2)}%</span>`;
+}
+
+// ── seed ──
+(function(){
+  if(loadCamps().length) return;
+  const id='c_sample1';
+  saveCamps([{id,client:'아식스',agency:'인크로스',campaign:'아식스 인크로스 6월 캠페인',start:'2026-06-09',end:'2026-06-18',products:['바텀시트','메인 띠배너','기록면 띠배너','접수면 띠배너'],created:Date.now()}]);
+  saveRD(id,{cfg:{client:'아식스',campaign:'아식스 인크로스 6월 캠페인',agency:'인크로스',start:'2026-06-09',end:'2026-06-18'},products:['바텀시트','메인 띠배너','기록면 띠배너','접수면 띠배너'],data:{
+    '바텀시트':{'2026-06-09':{imp:'10562',click:'521',ctr:'4.93',imp_r:'5620',click_r:'277',ctr_r:'4.93'},'2026-06-10':{imp:'10604',click:'568',ctr:'5.36',imp_r:'6047',click_r:'281',ctr_r:'4.65'},'2026-06-11':{imp:'10684',click:'535',ctr:'5.01',imp_r:'6845',click_r:'264',ctr_r:'3.86'}},
+    '메인 띠배너':{'2026-06-09':{imp:'10805',click:'107',ctr:'0.99',imp_r:'8053',click_r:'14',ctr_r:'0.17'},'2026-06-10':{imp:'10100',click:'100',ctr:'0.99',imp_r:'10100',click_r:'20',ctr_r:'0.20'},'2026-06-11':{imp:'11610',click:'117',ctr:'1.01',imp_r:'11610',click_r:'15',ctr_r:'0.13'}},
+    '기록면 띠배너':{'2026-06-09':{imp:'10206',click:'78',ctr:'0.76',imp_r:'2066',click_r:'6',ctr_r:'0.29'},'2026-06-10':{imp:'11862',click:'80',ctr:'0.67',imp_r:'1862',click_r:'1',ctr_r:'0.05'},'2026-06-11':{imp:'10198',click:'73',ctr:'0.72',imp_r:'1980',click_r:'1',ctr_r:'0.05'}},
+    '접수면 띠배너':{'2026-06-09':{imp:'10335',click:'73',ctr:'0.71',imp_r:'3356',click_r:'2',ctr_r:'0.06'},'2026-06-10':{imp:'10401',click:'88',ctr:'0.85',imp_r:'4018',click_r:'2',ctr_r:'0.05'},'2026-06-11':{imp:'10352',click:'70',ctr:'0.68',imp_r:'3523',click_r:'0',ctr_r:'0.00'}}
+  }});
+})();
+
+// ════════════════════════════════════
+//  INIT
+// ════════════════════════════════════
+function init(){
+  const p=new URLSearchParams(location.search);
+  const id=p.get('id');
+  isAgency=p.get('view')==='agency';
+  if(isAgency){
+    document.getElementById('sidebar').style.display='none';
+    document.querySelector('.app').style.gridTemplateColumns='1fr';
+    id ? openReport(id) : (document.getElementById('v-report').style.display='',document.getElementById('v-list').style.display='none');
+  } else {
+    id ? openReport(id) : renderAll();
+  }
+}
+
+function renderAll(){
+  renderSidebar(); renderMonthChips('month-chips'); renderAgFilter(); renderListKpi(); renderList();
+}
+
+// ════════════════════════════════════
+//  VIEW SWITCHING
+// ════════════════════════════════════
+function showView(v){
+  curView=v;
+  ['list','report','monthly','settings'].forEach(n=>{ document.getElementById('v-'+n).style.display=n===v?'':'none'; });
+  document.getElementById('sb-list').className='sbi'+(v==='list'?' on':'');
+  document.getElementById('sb-mo').className='sbi'+(v==='monthly'?' on':'');
+  document.getElementById('sb-stg').className='sbi'+(v==='settings'?' on':'');
+  document.getElementById('main').scrollTop=0;
+}
+function gotoList(){ showView('list'); curCampId=null; curRD=null; history.replaceState(null,'',location.pathname); renderAll(); }
+function gotoMonthly(){ showView('monthly'); renderSidebar(); renderMonthChips('month-chips-2'); renderMonthly(); }
+function gotoSettings(){ showView('settings'); renderSettings(); }
+
+// ════════════════════════════════════
+//  SIDEBAR
+// ════════════════════════════════════
+function renderSidebar(){
+  const camps=loadCamps();
+  document.getElementById('ct-all').textContent=camps.length;
+  const dates=camps.flatMap(c=>[c.start,c.end]).filter(Boolean).sort();
+  if(dates.length>=2) document.getElementById('sb-date').innerHTML=`전체 기간<br>${dates[0]} ~<br>${dates[dates.length-1]}`;
+  const ags=[...new Set(camps.map(c=>c.agency).filter(Boolean))].sort();
+  const cnt={}; camps.forEach(c=>{cnt[c.agency]=(cnt[c.agency]||0)+1;});
+  document.getElementById('sb-ags').innerHTML=ags.map(ag=>
+    `<button class="sbi sbi-ag" onclick="filterAg('${ag.replace(/'/g,"\\'")}')"><span>▸</span>${ag.length>11?ag.slice(0,11)+'…':ag}<span class="ct">${cnt[ag]}</span></button>`
+  ).join('');
+}
+function filterAg(ag){ showView('list'); document.getElementById('ag-filter').value=ag; renderAll(); }
+
+// ════════════════════════════════════
+//  MONTH CHIPS
+// ════════════════════════════════════
+function getMonths(){
+  const ms=new Set(); loadCamps().forEach(c=>{if(c.start)ms.add(c.start.slice(0,7));});
+  return ['all',...Array.from(ms).sort().reverse()];
+}
+function moLabel(m){ if(m==='all') return '전체'; const[y,mo]=m.split('-'); return `${y}.${parseInt(mo)}`; }
+function renderMonthChips(id){
+  const el=document.getElementById(id); if(!el) return;
+  el.innerHTML=getMonths().map(m=>`<button class="mc${selMonth===m?' on':''}" onclick="selMo('${m}')">${moLabel(m)}</button>`).join('');
+}
+function selMo(m){ selMonth=m; renderMonthChips('month-chips'); renderMonthChips('month-chips-2'); if(curView==='list'){renderListKpi();renderList();}else if(curView==='monthly')renderMonthly(); }
+
+// ════════════════════════════════════
+//  SEARCH
+// ════════════════════════════════════
+function doSearch(){
+  const q=document.getElementById('srch-inp').value.trim().toLowerCase();
+  const drop=document.getElementById('srch-drop');
+  if(!q){drop.classList.remove('open');return;}
+  const hits=loadCamps().filter(c=>[c.campaign,c.client,c.agency].some(s=>(s||'').toLowerCase().includes(q))).slice(0,8);
+  drop.innerHTML=hits.length ? hits.map(c=>`<div class="sri" onclick="openReport('${c.id}')"><div><div class="sri-name">${hl(c.campaign||'',q)}</div><div class="sri-meta">${c.client||''} · ${c.agency||''}</div></div></div>`).join('') : '<div style="padding:12px 14px;color:var(--t3);font-size:12px">결과 없음</div>';
+  drop.classList.add('open');
+}
+function closeSearch(){ document.getElementById('srch-drop').classList.remove('open'); }
+function hl(t,q){ const i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+`<mark style="background:#fef3c7;border-radius:2px">${t.slice(i,i+q.length)}</mark>`+t.slice(i+q.length); }
+
+// ════════════════════════════════════
+//  CAMPAIGN LIST
+// ════════════════════════════════════
+function renderAgFilter(){
+  const sel=document.getElementById('ag-filter'); const cur=sel.value;
+  const ags=[...new Set(loadCamps().map(c=>c.agency).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">전체 랩사</option>'+ags.map(a=>`<option${cur===a?' selected':''}>${a}</option>`).join('');
+}
+function getFiltered(){
+  const ag=document.getElementById('ag-filter').value;
+  return loadCamps().filter(c=>{
+    if(selMonth!=='all'&&(!c.start||c.start.slice(0,7)!==selMonth))return false;
+    if(ag&&c.agency!==ag)return false;
+    return true;
+  });
+}
+// Use real values (imp_r, click_r) for list/monthly metrics
+// Must use explicit check — r.imp_r could be '0' (falsy string) which should NOT fallback
+function campMetrics(c){
+  const rd=loadRD(c.id); if(!rd||!rd.data)return{imp:0,click:0,ctr:0};
+  let imp=0,click=0;
+  (c.products||[]).forEach(p=>Object.values(rd.data[p]||{}).forEach(r=>{
+    const hasReal = r.imp_r!==undefined && r.imp_r!=='';
+    imp  += hasReal ? (+r.imp_r||0)   : (+r.imp||0);
+    click+= hasReal ? (+r.click_r||0) : (+r.click||0);
+  }));
+  return{imp,click,ctr:imp>0?click/imp*100:0};
+}
+function isActive(c){ const t=new Date().toISOString().split('T')[0]; return c.start<=t&&t<=c.end; }
+
+function renderListKpi(){
+  const list=getFiltered();
+  let imp=0,click=0; list.forEach(c=>{const m=campMetrics(c);imp+=m.imp;click+=m.click;});
+  const ctr=imp>0?click/imp*100:0, act=list.filter(isActive).length;
+  document.getElementById('list-kpi').innerHTML=`
+    <div class="kpi gray"><div class="kl">캠페인 수</div><div class="kv" style="color:var(--t1)">${list.length}</div><div class="ks">진행중 ${act}개</div></div>
+    <div class="kpi blue"><div class="kl">총 노출수</div><div class="kv">${N(imp)}</div><div class="ks">실제값 기준</div></div>
+    <div class="kpi blue"><div class="kl">총 클릭수</div><div class="kv">${N(click)}</div><div class="ks">실제값 기준</div></div>
+    <div class="kpi gray"><div class="kl">평균 CTR</div><div class="kv" style="color:var(--t1)">${ctr.toFixed(2)}%</div><div class="ks">click-through rate</div></div>`;
+}
+function renderList(){
+  const list=getFiltered().sort((a,b)=>(b.start||'').localeCompare(a.start||''));
+  const el=document.getElementById('clist');
+  if(!list.length){el.innerHTML='<div class="empty">📋<br><br>캠페인이 없습니다<br><span style="font-size:12px">새 캠페인을 추가해보세요</span></div>';return;}
+  el.innerHTML=list.map(c=>{
+    const m=campMetrics(c),act=isActive(c);
+    return `<div class="ccard${curCampId===c.id?' sel':''}" onclick="openReport('${c.id}')">
+      <div class="cdot ${act?'on':'off'}"></div>
+      <div class="cbody">
+        <div class="cname">${c.campaign||'(이름 없음)'}</div>
+        <div class="cmeta"><span>${c.client||''}</span><span class="chip cb">${c.agency||''}</span><span>${c.start||''} ~ ${c.end||''}</span><span>상품 ${(c.products||[]).length}개</span></div>
+      </div>
+      <div class="cstats">
+        <div class="cs"><div class="csv">${N(m.imp)}</div><div class="csl">노출</div></div>
+        <div class="cs"><div class="csv">${N(m.click)}</div><div class="csl">클릭</div></div>
+        <div class="cs"><div class="csv" style="color:var(--t1)">${m.ctr.toFixed(2)}%</div><div class="csl">CTR</div></div>
+      </div>
+      <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+        <button class="btn-icon" onclick="openEditModal('${c.id}')">✏️</button>
+        <button class="btn-icon del" onclick="delCamp('${c.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════
+//  OPEN REPORT
+// ════════════════════════════════════
+function openReport(id){
+  THR = loadThresholds(); // always reload so settings changes take effect immediately
+  const camps=loadCamps();
+  const camp=camps.find(c=>c.id===id);
+  if(!camp){showToast('캠페인을 찾을 수 없습니다');return;}
+  curCampId=id; curTab=0;
+  const raw=loadRD(id);
+  curRD=raw||{cfg:{client:camp.client,campaign:camp.campaign,agency:camp.agency,start:camp.start,end:camp.end},products:camp.products||[],data:{}};
+  (curRD.products||[]).forEach(p=>{if(!curRD.data[p])curRD.data[p]={};});
+
+  showView('report');
+  if(isAgency){
+    document.getElementById('agb').style.display='flex';
+    document.getElementById('rnav').style.display='none';
+    document.getElementById('r-setup').style.display='none';
+    document.getElementById('agdf').style.display='flex';
+    document.getElementById('af-s').value=curRD.cfg.start||'';
+    document.getElementById('af-e').value=curRD.cfg.end||'';
+    document.getElementById('agb-title').textContent=curRD.cfg.campaign||'광고 성과 리포트';
+    document.getElementById('agb-sub').textContent=(curRD.cfg.start&&curRD.cfg.end)?`${curRD.cfg.start} ~ ${curRD.cfg.end}`:'';
+    document.getElementById('agb-badge').textContent=curRD.cfg.agency||'';
+  } else {
+    document.getElementById('agb').style.display='none';
+    document.getElementById('rnav').style.display='flex';
+    document.getElementById('r-setup').style.display='';
+    document.getElementById('agdf').style.display='none';
+    fillRSetup();
+  }
+  renderRHeader(); renderRProdChips(); renderRMetrics(); renderRTabs(); renderRTable();
+  if(!isAgency) renderSidebar();
+}
+function onAgFilter(){ renderRTable(); renderRMetrics(); }
+function resetAgFilter(){ document.getElementById('af-s').value=curRD.cfg.start||''; document.getElementById('af-e').value=curRD.cfg.end||''; onAgFilter(); }
+
+// ════════════════════════════════════
+//  REPORT — SETUP
+// ════════════════════════════════════
+function fillRSetup(){
+  const c=curRD.cfg;
+  document.getElementById('rc-client').value=c.client||'';
+  document.getElementById('rc-campaign').value=c.campaign||'';
+  document.getElementById('rc-agency').value=c.agency||'';
+  document.getElementById('rc-start').value=c.start||'';
+  document.getElementById('rc-end').value=c.end||'';
+}
+function rSaveCfg(){
+  curRD.cfg.client=document.getElementById('rc-client').value;
+  curRD.cfg.campaign=document.getElementById('rc-campaign').value;
+  curRD.cfg.agency=document.getElementById('rc-agency').value;
+  saveRD(curCampId,curRD); syncCamp(); renderRHeader(); renderSidebar();
+}
+function rDateChange(){
+  curRD.cfg.start=document.getElementById('rc-start').value;
+  curRD.cfg.end=document.getElementById('rc-end').value;
+  saveRD(curCampId,curRD); syncCamp(); renderRHeader(); renderRMetrics(); renderRTabs(); renderRTable();
+}
+function syncCamp(){
+  const camps=loadCamps(),i=camps.findIndex(c=>c.id===curCampId); if(i<0)return;
+  camps[i]={...camps[i],client:curRD.cfg.client,agency:curRD.cfg.agency,campaign:curRD.cfg.campaign,start:curRD.cfg.start,end:curRD.cfg.end,products:curRD.products};
+  saveCamps(camps);
+}
+function renderRHeader(){
+  const c=curRD.cfg,t=new Date().toISOString().split('T')[0],act=c.start&&c.end&&c.start<=t&&t<=c.end;
+  document.getElementById('rcrumb').textContent=c.campaign||'';
+  document.getElementById('rh-title').textContent=c.campaign||'리포트';
+  document.getElementById('rh-chips').innerHTML=`
+    <span class="chip cb">${c.agency||''}</span>
+    <span class="chip cx">${c.client||''}</span>
+    ${c.start&&c.end?`<span class="chip cx">${c.start} ~ ${c.end}</span>`:''}
+    <span class="chip ${act?'cg':'cx'}">${act?'진행중':'종료'}</span>`;
+}
+
+// ════════════════════════════════════
+//  REPORT — PRODUCTS
+// ════════════════════════════════════
+function renderRProdChips(){
+  document.getElementById('r-prods').innerHTML=curRD.products.map((p,i)=>
+    `<span class="pch">${p}<span class="x" onclick="rRemProd(${i})">×</span></span>`).join('');
+}
+function rAddProd(){
+  const v=document.getElementById('r-newprod').value.trim(); if(!v)return;
+  if(curRD.products.includes(v)){showToast('이미 있는 상품명');return;}
+  curRD.products.push(v); curRD.data[v]={};
+  saveRD(curCampId,curRD); syncCamp();
+  document.getElementById('r-newprod').value='';
+  renderRProdChips(); renderRMetrics(); renderRTabs(); renderRTable();
+}
+function rRemProd(i){
+  if(!confirm(`"${curRD.products[i]}" 삭제?`))return;
+  delete curRD.data[curRD.products[i]]; curRD.products.splice(i,1);
+  if(curTab>0&&curTab>curRD.products.length) curTab=0;
+  saveRD(curCampId,curRD); syncCamp();
+  renderRProdChips(); renderRMetrics(); renderRTabs(); renderRTable();
+}
+
+// ════════════════════════════════════
+//  REPORT — TABS
+// ════════════════════════════════════
+function renderRTabs(){
+  const ps=curRD.products;
+  const labels=ps.length>1?['전체 합산',...ps]:[...ps];
+  document.getElementById('r-tabs').innerHTML=labels.map((l,i)=>
+    `<button class="rtab${curTab===i?' on':''}" onclick="switchTab(${i})">${l}</button>`).join('');
+}
+function switchTab(i){ curTab=i; document.querySelectorAll('.rtab').forEach((b,j)=>b.classList.toggle('on',j===i)); renderRMetrics(); renderRTable(); }
+
+// ════════════════════════════════════
+//  REPORT — DATES
+// ════════════════════════════════════
+function getViewDates(){
+  if(isAgency){
+    const s=document.getElementById('af-s').value||curRD.cfg.start||'';
+    const e=document.getElementById('af-e').value||curRD.cfg.end||'';
+    return getDatesRange(s,e);
+  }
+  return getDatesRange(curRD.cfg.start,curRD.cfg.end);
+}
+
+// ════════════════════════════════════
+//  REPORT — METRICS
+// ════════════════════════════════════
+function calcM(prods){
+  const dates=getViewDates();
+  let imp=0,click=0,ir=0,cr=0;
+  prods.forEach(p=>dates.forEach(d=>{
+    const r=(curRD.data[p]||{})[d]||{};
+    imp+=+r.imp||0; click+=+r.click||0; ir+=+r.imp_r||0; cr+=+r.click_r||0;
+  }));
+  return{imp,click,ctr:imp>0?click/imp*100:0,ir,cr,ctr_r:ir>0?cr/ir*100:0};
+}
+// Returns the products for the current tab
+function tabProds(){
+  const ps=curRD.products;
+  if(!ps||!ps.length) return [];
+  const multi=curTab===0&&ps.length>1;
+  if(multi) return ps;
+  // single product tab: tab 0 if only 1 product, else tab-1 index
+  const idx=ps.length>1?curTab-1:curTab;
+  return idx>=0&&idx<ps.length?[ps[idx]]:[];
+}
+
+function renderRMetrics(){
+  const m=calcM(tabProds());
+  const el=document.getElementById('r-kpi');
+  if(isAgency){
+    el.innerHTML=`
+      <div class="kpi blue"><div class="kl">총 노출수</div><div class="kv">${N(m.imp)}</div><div class="ks">impressions</div></div>
+      <div class="kpi blue"><div class="kl">총 클릭수</div><div class="kv">${N(m.click)}</div><div class="ks">clicks</div></div>
+      <div class="kpi gray"><div class="kl">CTR</div><div class="kv" style="color:var(--t1)">${m.ctr.toFixed(2)}%</div><div class="ks">click-through rate</div></div>`;
+  } else {
+    el.innerHTML=`
+      <div class="kpi blue"><div class="kl">노출수 (전달)</div><div class="kv">${N(m.imp)}</div></div>
+      <div class="kpi blue"><div class="kl">클릭수 (전달)</div><div class="kv">${N(m.click)}</div></div>
+      <div class="kpi gray"><div class="kl">CTR (전달)</div><div class="kv" style="color:var(--t1)">${m.ctr.toFixed(2)}%</div></div>
+      <div class="kpi pink"><div class="kl">노출수 (실제)</div><div class="kv">${N(m.ir)}</div></div>
+      <div class="kpi pink"><div class="kl">클릭수 (실제)</div><div class="kv">${N(m.cr)}</div></div>
+      <div class="kpi gray"><div class="kl">CTR (실제)</div><div class="kv" style="color:var(--t1)">${m.ctr_r.toFixed(2)}%</div></div>`;
+  }
+}
+
+// ════════════════════════════════════
+//  REPORT — TABLE
+// ════════════════════════════════════
+function esc(s){ return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'") }
+
+function niTd(val,ed,isReal,p,d,f){
+  const cls=isReal?'rc':'dc';
+  if(ed){
+    const id=`c_${p}_${d}_${f}`.replace(/[\s\/\.]/g,'_');
+    const isCtr=f.includes('ctr');
+    return `<td class="${cls}"><input class="ni${isCtr?' auto':''}"${isCtr?' data-auto="1"':''} id="${id}" type="text" inputmode="decimal" value="${val||''}" onchange="onCell('${esc(p)}','${d}','${f}',this.value)" onfocus="this.select();this.classList.remove('auto')" onblur="if(this.dataset.auto)this.classList.add('auto')"></td>`;
+  }
+  if(f.includes('ctr')) return `<td class="${cls}"><div class="ci c">${ctrDisplay(val, p)}</div></td>`;
+  return `<td class="${cls}"><div class="ci c">${val?(+val).toLocaleString('ko-KR'):'—'}</div></td>`;
+}
+
+function renderRTable(){
+  const dates=getViewDates();
+  const wrap=document.getElementById('r-tbl');
+  const ps=curRD.products;
+  if(!dates.length||!ps.length){
+    wrap.innerHTML='<div style="padding:36px;text-align:center;color:var(--t3);font-size:12px">캠페인 설정 후 날짜가 자동 생성됩니다</div>'; return;
+  }
+
+  const isMulti=curTab===0&&ps.length>1;
+  const prods=tabProds();
+  if(!prods.length){ wrap.innerHTML='<div style="padding:36px;text-align:center;color:var(--t3)">상품이 없습니다</div>'; return; }
+
+  let hg,hc,body='';
+
+  if(isMulti){
+    // TOTAL VIEW: one row per date, all products summed
+    if(isAgency){
+      hg='<tr class="grp"><th class="bg" colspan="2"></th><th class="dg" colspan="3">합산 성과</th></tr>';
+      hc='<tr class="cols"><th class="bc" style="min-width:76px">날짜</th><th class="bc" style="min-width:28px">요일</th><th class="dc" style="min-width:88px">노출수</th><th class="dc" style="min-width:72px">클릭수</th><th class="dc" style="min-width:60px">CTR</th></tr>';
+    } else {
+      hg='<tr class="grp"><th class="bg" colspan="2"></th><th class="dg" colspan="3">전달값 합산</th><th class="rg" colspan="3">실제값 합산</th></tr>';
+      hc='<tr class="cols"><th class="bc" style="min-width:76px">날짜</th><th class="bc" style="min-width:28px">요일</th><th class="dc">노출수</th><th class="dc">클릭수</th><th class="dc">CTR</th><th class="rc">노출수</th><th class="rc">클릭수</th><th class="rc">CTR</th></tr>';
+    }
+    dates.forEach(d=>{
+      const dow=getDow(d),we=isWe(d);
+      let imp=0,click=0,ir=0,cr=0;
+      ps.forEach(p=>{const r=(curRD.data[p]||{})[d]||{};imp+=+r.imp||0;click+=+r.click||0;ir+=+r.imp_r||0;cr+=+r.click_r||0;});
+      const ctr=imp>0?click/imp*100:0,ctr_r=ir>0?cr/ir*100:0;
+      const hd=imp>0||click>0;
+      body+=`<tr${we?' class="we"':''}><td><div class="ci">${d.slice(5).replace('-','/')}<span class="dow">${dow}</span></div></td><td><div class="ci" style="color:var(--t3);font-size:10px">${dow}</div></td>`;
+      if(isAgency){
+        body+=`<td class="dc"><div class="ci c">${hd?N(imp):'—'}</div></td><td class="dc"><div class="ci c">${hd?N(click):'—'}</div></td><td class="dc"><div class="ci c">${hd?ctrDisplayNoThr(ctr):'—'}</div></td>`;
+      } else {
+        body+=`<td class="dc"><div class="ci c">${hd?N(imp):'—'}</div></td><td class="dc"><div class="ci c">${hd?N(click):'—'}</div></td><td class="dc"><div class="ci c">${hd?ctrDisplayNoThr(ctr):'—'}</div></td>`;
+        body+=`<td class="rc"><div class="ci c">${hd?N(ir):'—'}</div></td><td class="rc"><div class="ci c">${hd?N(cr):'—'}</div></td><td class="rc"><div class="ci c">${hd?ctrDisplayNoThr(ctr_r):'—'}</div></td>`;
+      }
+      body+='</tr>';
+    });
+    const tm=calcM(ps);
+    body+=`<tr class="sumr"><td><div class="ci">합계</div></td><td></td>`;
+    if(isAgency){
+      body+=`<td class="dc"><div class="ci">${N(tm.imp)}</div></td><td class="dc"><div class="ci">${N(tm.click)}</div></td><td class="dc"><div class="ci">${tm.ctr.toFixed(2)}%</div></td>`;
+    } else {
+      body+=`<td class="dc"><div class="ci">${N(tm.imp)}</div></td><td class="dc"><div class="ci">${N(tm.click)}</div></td><td class="dc"><div class="ci">${tm.ctr.toFixed(2)}%</div></td>`;
+      body+=`<td class="rc"><div class="ci">${N(tm.ir)}</div></td><td class="rc"><div class="ci">${N(tm.cr)}</div></td><td class="rc"><div class="ci">${tm.ctr_r.toFixed(2)}%</div></td>`;
+    }
+    body+='</tr>';
+
+  } else {
+    // SINGLE PRODUCT
+    const prod=prods[0];
+    if(isAgency){
+      hg=`<tr class="grp"><th class="bg" colspan="2"></th><th class="dg" colspan="3">성과</th></tr>`;
+      hc=`<tr class="cols"><th class="bc" style="min-width:76px">날짜</th><th class="bc" style="min-width:28px">요일</th><th class="dc" style="min-width:88px">노출수</th><th class="dc" style="min-width:72px">클릭수</th><th class="dc" style="min-width:60px">CTR</th></tr>`;
+    } else {
+      hg=`<tr class="grp"><th class="bg" colspan="2"></th><th class="dg" colspan="3">전달값</th><th class="rg" colspan="3">실제값</th></tr>`;
+      hc=`<tr class="cols"><th class="bc" style="min-width:76px">날짜</th><th class="bc" style="min-width:28px">요일</th><th class="dc">노출수</th><th class="dc">클릭수</th><th class="dc">CTR</th><th class="rc">노출수</th><th class="rc">클릭수</th><th class="rc">CTR</th></tr>`;
+    }
+    dates.forEach(d=>{
+      const dow=getDow(d),we=isWe(d);
+      const row=(curRD.data[prod]||{})[d]||{};
+      body+=`<tr${we?' class="we"':''}><td><div class="ci">${d.slice(5).replace('-','/')}<span class="dow">${dow}</span></div></td><td><div class="ci" style="color:var(--t3);font-size:10px">${dow}</div></td>`;
+      if(isAgency){
+        body+=niTd(row.imp,false,false,prod,d,'imp')+niTd(row.click,false,false,prod,d,'click')+niTd(row.ctr,false,false,prod,d,'ctr');
+      } else {
+        body+=niTd(row.imp,true,false,prod,d,'imp')+niTd(row.click,true,false,prod,d,'click')+niTd(row.ctr,true,false,prod,d,'ctr');
+        body+=niTd(row.imp_r,true,true,prod,d,'imp_r')+niTd(row.click_r,true,true,prod,d,'click_r')+niTd(row.ctr_r,true,true,prod,d,'ctr_r');
+      }
+      body+='</tr>';
+    });
+    const sm=calcM([prod]);
+    body+=`<tr class="sumr"><td><div class="ci">합계</div></td><td></td>`;
+    if(isAgency){
+      body+=`<td class="dc"><div class="ci">${N(sm.imp)}</div></td><td class="dc"><div class="ci">${N(sm.click)}</div></td><td class="dc"><div class="ci">${sm.ctr.toFixed(2)}%</div></td>`;
+    } else {
+      body+=`<td class="dc"><div class="ci">${N(sm.imp)}</div></td><td class="dc"><div class="ci">${N(sm.click)}</div></td><td class="dc"><div class="ci">${sm.ctr.toFixed(2)}%</div></td>`;
+      body+=`<td class="rc"><div class="ci">${N(sm.ir)}</div></td><td class="rc"><div class="ci">${N(sm.cr)}</div></td><td class="rc"><div class="ci">${sm.ctr_r.toFixed(2)}%</div></td>`;
+    }
+    body+='</tr>';
+  }
+
+  wrap.innerHTML=`<table><thead>${hg}${hc}</thead><tbody>${body}</tbody></table>`;
+}
+
+// ── cell change ──
+function onCell(p,d,f,v){
+  if(!curRD.data[p])curRD.data[p]={};
+  if(!curRD.data[p][d])curRD.data[p][d]={};
+  curRD.data[p][d][f]=v;
+  const row=curRD.data[p][d];
+  // auto-calc CTR
+  if(f==='imp'||f==='click'){
+    const i=+row.imp||0,c=+row.click||0;
+    if(i>0){row.ctr=(c/i*100).toFixed(2);const el=document.getElementById(`c_${p}_${d}_ctr`.replace(/[\s\/\.]/g,'_'));if(el){el.value=row.ctr;el.dataset.auto='1';}}
+  }
+  if(f==='imp_r'||f==='click_r'){
+    const i=+row.imp_r||0,c=+row.click_r||0;
+    if(i>0){row.ctr_r=(c/i*100).toFixed(2);const el=document.getElementById(`c_${p}_${d}_ctr_r`.replace(/[\s\/\.]/g,'_'));if(el){el.value=row.ctr_r;el.dataset.auto='1';}}
+  }
+  saveRD(curCampId,curRD);
+  clearTimeout(window._rt); window._rt=setTimeout(()=>renderRMetrics(),400);
+}
+
+// ════════════════════════════════════
+//  SETTINGS
+// ════════════════════════════════════
+function renderSettings(){
+  const el=document.getElementById('thr-grid');
+  const entries=Object.entries(THR);
+  if(!entries.length){el.innerHTML='<div style="font-size:12px;color:var(--t3)">기준값이 없습니다. 아래에서 추가하세요.</div>';return;}
+  el.innerHTML=entries.map(([name,val])=>`
+    <div class="thr-row">
+      <div class="thr-name">${name}</div>
+      <input class="thr-inp" type="text" inputmode="decimal" value="${val}" onchange="thrChange('${esc(name)}',this.value)">
+      <div class="thr-pct">%</div>
+      <button class="btn-icon del" style="width:22px;height:22px;font-size:11px" onclick="thrDel('${esc(name)}')">×</button>
+    </div>`).join('');
+}
+function thrChange(name,val){
+  const n=parseFloat(val); if(isNaN(n))return;
+  THR[name]=n; saveThresholds(THR);
+  // immediately re-render table if a report is open so colors update live
+  if(curView==='report'&&curRD) renderRTable();
+}
+function thrDel(name){
+  delete THR[name]; saveThresholds(THR); renderSettings(); showToast('삭제되었습니다');
+  if(curView==='report'&&curRD) renderRTable();
+}
+function thrAdd(){
+  const name=document.getElementById('thr-new-name').value.trim();
+  const val=parseFloat(document.getElementById('thr-new-val').value);
+  if(!name){showToast('상품명을 입력하세요');return;}
+  if(isNaN(val)){showToast('기준값을 입력하세요');return;}
+  THR[name]=val; saveThresholds(THR);
+  document.getElementById('thr-new-name').value='';
+  document.getElementById('thr-new-val').value='';
+  renderSettings(); showToast('추가되었습니다');
+  if(curView==='report'&&curRD) renderRTable();
+}
+
+// ════════════════════════════════════
+//  MONTHLY
+// ════════════════════════════════════
+function renderMonthly(){
+  const all=loadCamps();
+  const filtered=selMonth==='all'?all:all.filter(c=>c.start&&c.start.slice(0,7)===selMonth);
+  document.getElementById('mo-title').textContent=selMonth==='all'?'전체 캠페인 성과':`${moLabel(selMonth)} 캠페인 성과`;
+  let imp=0,click=0; filtered.forEach(c=>{const m=campMetrics(c);imp+=m.imp;click+=m.click;});
+  const ctr=imp>0?click/imp*100:0;
+  document.getElementById('mo-kpi').innerHTML=`
+    <div class="kpi gray"><div class="kl">캠페인</div><div class="kv" style="color:var(--t1)">${filtered.length}</div></div>
+    <div class="kpi blue"><div class="kl">총 노출수</div><div class="kv">${N(imp)}</div></div>
+    <div class="kpi blue"><div class="kl">총 클릭수</div><div class="kv">${N(click)}</div></div>
+    <div class="kpi gray"><div class="kl">평균 CTR</div><div class="kv" style="color:var(--t1)">${ctr.toFixed(2)}%</div></div>`;
+
+  const tb=document.getElementById('mo-tbody');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--t3)">데이터 없음</td></tr>';return;}
+  let tI=0,tC=0;
+  tb.innerHTML=filtered.sort((a,b)=>(b.start||'').localeCompare(a.start||'')).map(c=>{
+    const m=campMetrics(c);tI+=m.imp;tC+=m.click;
+    return `<tr onclick="openReport('${c.id}')" style="cursor:pointer">
+      <td><strong>${c.campaign||''}</strong></td><td>${c.client||''}</td>
+      <td><span class="chip cb">${c.agency||''}</span></td>
+      <td style="font-size:11px;color:var(--t2)">${c.start||''} ~ ${c.end||''}</td>
+      <td class="r">${N(m.imp)}</td><td class="r">${N(m.click)}</td>
+      <td class="r">${ctrDisplayNoThr(m.ctr)}</td>
+    </tr>`;
+  }).join('');
+  const tc=tI>0?tC/tI*100:0;
+  tb.innerHTML+=`<tr class="sumr"><td colspan="4">합계</td><td class="r">${N(tI)}</td><td class="r">${N(tC)}</td><td class="r">${tc.toFixed(2)}%</td></tr>`;
+
+  const agMap={};
+  filtered.forEach(c=>{const ag=c.agency||'(미설정)';if(!agMap[ag])agMap[ag]={count:0,imp:0,click:0};const m=campMetrics(c);agMap[ag].count++;agMap[ag].imp+=m.imp;agMap[ag].click+=m.click;});
+  const at=document.getElementById('ag-tbody');
+  const rows=Object.entries(agMap).sort((a,b)=>b[1].imp-a[1].imp);
+  if(!rows.length){at.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--t3)">데이터 없음</td></tr>';return;}
+  let aI=0,aC=0,aCo=0;
+  at.innerHTML=rows.map(([ag,d])=>{aI+=d.imp;aC+=d.click;aCo+=d.count;
+    const c=d.imp>0?d.click/d.imp*100:0;
+    return `<tr><td><span class="chip cb">${ag}</span></td><td class="r">${d.count}</td><td class="r">${N(d.imp)}</td><td class="r">${N(d.click)}</td><td class="r">${ctrDisplayNoThr(c)}</td></tr>`;
+  }).join('');
+  at.innerHTML+=`<tr class="sumr"><td>합계</td><td class="r">${aCo}</td><td class="r">${N(aI)}</td><td class="r">${N(aC)}</td><td class="r">${(aI>0?aC/aI*100:0).toFixed(2)}%</td></tr>`;
+}
+
+// ════════════════════════════════════
+//  CRUD
+// ════════════════════════════════════
+function openNewModal(){
+  document.getElementById('nm-title').textContent='새 캠페인 추가';
+  document.getElementById('nm-id').value='';
+  ['nm-client','nm-agency','nm-campaign','nm-start','nm-end','nm-prods'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('new-ovl').classList.add('open');
+}
+function openEditModal(id){
+  const c=loadCamps().find(x=>x.id===id);if(!c)return;
+  document.getElementById('nm-title').textContent='캠페인 수정';
+  document.getElementById('nm-id').value=id;
+  document.getElementById('nm-client').value=c.client||'';
+  document.getElementById('nm-agency').value=c.agency||'';
+  document.getElementById('nm-campaign').value=c.campaign||'';
+  document.getElementById('nm-start').value=c.start||'';
+  document.getElementById('nm-end').value=c.end||'';
+  document.getElementById('nm-prods').value=(c.products||[]).join(', ');
+  document.getElementById('new-ovl').classList.add('open');
+}
+function closeNewModal(){ document.getElementById('new-ovl').classList.remove('open'); }
+function saveCampaign(){
+  const client=document.getElementById('nm-client').value.trim();
+  const agency=document.getElementById('nm-agency').value.trim();
+  const campaign=document.getElementById('nm-campaign').value.trim();
+  const start=document.getElementById('nm-start').value;
+  const end=document.getElementById('nm-end').value;
+  const products=document.getElementById('nm-prods').value.split(',').map(s=>s.trim()).filter(Boolean);
+  if(!client||!agency||!campaign||!start||!end){showToast('필수 항목을 모두 입력하세요');return;}
+  const camps=loadCamps(),eid=document.getElementById('nm-id').value;
+  if(eid){
+    const i=camps.findIndex(c=>c.id===eid);
+    if(i>=0){camps[i]={...camps[i],client,agency,campaign,start,end,products};
+      const rd=loadRD(eid);if(rd){rd.cfg={client,agency,campaign,start,end};rd.products=products;saveRD(eid,rd);}
+    }
+  } else {
+    const id='c_'+Date.now();
+    camps.push({id,client,agency,campaign,start,end,products,created:Date.now()});
+    const rd={cfg:{client,campaign,agency,start,end},products,data:{}};
+    products.forEach(p=>rd.data[p]={}); saveRD(id,rd);
+  }
+  saveCamps(camps); closeNewModal();
+  showToast(eid?'수정되었습니다':'캠페인이 추가되었습니다');
+  renderAll();
+}
+function delCamp(id){
+  if(!confirm('이 캠페인을 삭제하시겠습니까?'))return;
+  saveCamps(loadCamps().filter(c=>c.id!==id)); localStorage.removeItem(rKey(id));
+  showToast('삭제되었습니다'); renderAll();
+}
+
+// ════════════════════════════════════
+//  SHARE & EXPORT
+// ════════════════════════════════════
+function openShare(){
+  const url=location.origin+location.pathname+'?id='+curCampId+'&view=agency';
+  document.getElementById('share-url').textContent=url;
+  document.getElementById('share-ovl').classList.add('open');
+}
+function closeShare(){ document.getElementById('share-ovl').classList.remove('open'); }
+function copyShare(){
+  const url=document.getElementById('share-url').textContent;
+  navigator.clipboard.writeText(url).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);});
+  showToast('링크가 복사되었습니다!'); closeShare();
+}
+function doExport(){
+  const dates=getViewDates();
+  const rows=[['날짜','요일','상품','노출수','클릭수','CTR',...(isAgency?[]:['노출수(실제)','클릭수(실제)','CTR(실제)'])]];
+  dates.forEach(d=>{
+    const dow=getDow(d);
+    curRD.products.forEach(p=>{
+      const r=(curRD.data[p]||{})[d]||{};
+      const row=[d,dow,p,r.imp||'',r.click||'',r.ctr?r.ctr+'%':''];
+      if(!isAgency)row.push(r.imp_r||'',r.click_r||'',r.ctr_r?r.ctr_r+'%':'');
+      rows.push(row);
+    });
+  });
+  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`${curRD.cfg.campaign||'report'}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+// ── data export/import ──
+function exportAll(){
+  const all={campaigns:loadCamps(),thresholds:THR,reports:{}};
+  loadCamps().forEach(c=>{const rd=loadRD(c.id);if(rd)all.reports[c.id]=rd;});
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(all,null,2));
+  a.download=`runnble_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();
+}
+function importAll(input){
+  const file=input.files[0];if(!file)return;
+  const fr=new FileReader();
+  fr.onload=e=>{
+    try{
+      const all=JSON.parse(e.target.result);
+      if(all.campaigns)saveCamps(all.campaigns);
+      if(all.thresholds){saveThresholds(all.thresholds);THR=all.thresholds;}
+      if(all.reports)Object.entries(all.reports).forEach(([id,rd])=>saveRD(id,rd));
+      showToast('가져오기 완료');
+      renderAll(); renderSettings();
+    }catch{showToast('파일 형식이 올바르지 않습니다');}
+  };
+  fr.readAsText(file);
+}
+
+// keyboard nav
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.activeElement.classList.contains('ni')){
+    e.preventDefault();
+    const all=[...document.querySelectorAll('.ni')];
+    const i=all.indexOf(document.activeElement);
+    if(i<all.length-1)all[i+1].focus();
+  }
+});
+
+init();
+</script>
+</body>
+</html>
